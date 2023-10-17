@@ -8,7 +8,7 @@ namespace Zion1.Notification.Domain.Entities
 {
     public class Email : Notification
     {
-        public string Subject { get; set; }
+        public string Subject { get; set; } = string.Empty;
         
         //public List<IFormFile> Attachments { get; set; }
     }

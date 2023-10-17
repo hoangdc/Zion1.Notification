@@ -1,4 +1,5 @@
-﻿using Zion1.Common.Infrastructure.Persistence.Repositories;
+﻿using Zion1.Common.Application.Contracts;
+using Zion1.Common.Infrastructure.Persistence.Repositories;
 using Zion1.Notification.Application.Repositories;
 using Zion1.Notification.Domain.Entities;
 
@@ -11,7 +12,6 @@ namespace Zion1.Notification.Infrastructure.Persistence.Repositories
         {
             _notificationDbContext = notificationDbContext;
         }
-
         
     }
 }

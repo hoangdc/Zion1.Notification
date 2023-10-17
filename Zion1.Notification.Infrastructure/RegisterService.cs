@@ -21,12 +21,10 @@ namespace Zion1.Notification.Infrastructure
             var smtpSettings = configuration.GetSection("SMTPSettings").Get<SMTPSettings>();
             //Store SMTP Settings into Cache
 
-
-            services.AddMediatR(typeof(SendEmailCommand).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(GetEmailQuery).GetTypeInfo().Assembly);
-
-            services.AddMediatR(typeof(SendTextCommand).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(GetTextQuery).GetTypeInfo().Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SendEmailCommand).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetEmailQuery).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SendTextCommand).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetTextQuery).Assembly));
 
             services.AddScoped<IEmailCommandRepository, EmailCommandRepository>();
             services.AddScoped<IEmailQueryRepository, EmailQueryRepository>();

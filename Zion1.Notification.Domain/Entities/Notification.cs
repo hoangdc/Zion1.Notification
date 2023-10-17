@@ -2,10 +2,10 @@
 
 namespace Zion1.Notification.Domain.Entities
 {
-    public class Notification : BaseEntity<int>
+    public class Notification : EntityBase<int>
     {
-        public string Message { get; set; }
-        public string From { get; set; }
-        public string To { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string From { get; set; } = string.Empty;
+        public string To { get; set; } = string.Empty;
     }
 }
