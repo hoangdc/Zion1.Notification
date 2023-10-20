@@ -1,12 +1,13 @@
 ﻿using MediatR;
+using Zion1.Notification.Application.Mapper;
 using Zion1.Notification.Application.Repositories;
-using Zion1.Notification.Domain.Entities;
+using Zion1.Notification.Share.DTOs;
 
 namespace Zion1.Notification.Application.Queries
 {
-    public class GetEmailQuery : IRequest<IReadOnlyList<Email>>
+    public class GetEmailQuery : IRequest<IReadOnlyList<EmailDto>>
     {
-        public class GetAllEmailsQueryHandler : IRequestHandler<GetEmailQuery, IReadOnlyList<Email>>
+        public class GetAllEmailsQueryHandler : IRequestHandler<GetEmailQuery, IReadOnlyList<EmailDto>>
         {
             private readonly IEmailQueryRepository _emailRepository;
             public GetAllEmailsQueryHandler(IEmailQueryRepository emailRepository)
@@ -15,9 +16,10 @@ namespace Zion1.Notification.Application.Queries
             }
             
 
-            public async Task<IReadOnlyList<Email>> Handle(GetEmailQuery request, CancellationToken cancellationToken)
+            public async Task<IReadOnlyList<EmailDto>> Handle(GetEmailQuery request, CancellationToken cancellationToken)
             {
-                return await _emailRepository.GetAllAsync();
+                var emailList = await _emailRepository.GetAllAsync();
+                return NotificationMapper.Mapper.Map<IReadOnlyList<EmailDto>>(emailList);
             }
             
         }

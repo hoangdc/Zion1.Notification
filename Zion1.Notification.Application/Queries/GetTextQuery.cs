@@ -1,12 +1,13 @@
 ﻿using MediatR;
+using Zion1.Notification.Application.Mapper;
 using Zion1.Notification.Application.Repositories;
-using Zion1.Notification.Domain.Entities;
+using Zion1.Notification.Share.DTOs;
 
 namespace Zion1.Notification.Application.Queries
 {
-    public class GetTextQuery : IRequest<IReadOnlyList<Text>>
+    public class GetTextQuery : IRequest<IReadOnlyList<TextDto>>
     {
-        public class GetTextQueryHandler : IRequestHandler<GetTextQuery, IReadOnlyList<Text>>
+        public class GetTextQueryHandler : IRequestHandler<GetTextQuery, IReadOnlyList<TextDto>>
         {
             private readonly ITextQueryRepository _TextRepository;
             public GetTextQueryHandler(ITextQueryRepository TextRepository)
@@ -15,9 +16,10 @@ namespace Zion1.Notification.Application.Queries
             }
             
 
-            public async Task<IReadOnlyList<Text>> Handle(GetTextQuery request, CancellationToken cancellationToken)
+            public async Task<IReadOnlyList<TextDto>> Handle(GetTextQuery request, CancellationToken cancellationToken)
             {
-                return await _TextRepository.GetAllAsync();
+                var textList = await _TextRepository.GetAllAsync();
+                return NotificationMapper.Mapper.Map<IReadOnlyList<TextDto>>(textList);
             }
             
         }

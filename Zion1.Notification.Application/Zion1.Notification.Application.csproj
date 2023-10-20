@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Zion1.Notification.Domain\Zion1.Notification.Domain.csproj" />
+    <ProjectReference Include="..\Zion1.Notification.Share\Zion1.Notification.Share.csproj" />
   </ItemGroup>
 
 </Project>

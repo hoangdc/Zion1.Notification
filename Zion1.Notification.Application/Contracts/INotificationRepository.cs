@@ -2,6 +2,6 @@
 {
     public interface INotificationRepository<T> where T : class
     {
-        Task<bool> SendAsync(T item); 
+        Task<int> SendAsync(T item); 
     }
 }

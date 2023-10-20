@@ -2,29 +2,23 @@
 using Zion1.Notification.Application.Mapper;
 using Zion1.Notification.Application.Repositories;
 using Zion1.Notification.Domain.Entities;
+using Zion1.Notification.Share.DTOs;
 
 namespace Zion1.Notification.Application.Commands
 {
-    public class SendTextCommand : Text, IRequest<bool>
+    public class SendTextCommand : TextDto, IRequest<int>
     {
-        public class SendTextCommandHandler : IRequestHandler<SendTextCommand, bool>
+        public class SendTextCommandHandler : IRequestHandler<SendTextCommand, int>
         {
             private readonly ITextCommandRepository _textRepository;
             public SendTextCommandHandler(ITextCommandRepository textRepository)
             {
                 _textRepository = textRepository;
             }
-            public async Task<bool> Handle(SendTextCommand command, CancellationToken cancellationToken)
+            public async Task<int> Handle(SendTextCommand command, CancellationToken cancellationToken)
             {
-                var textEntity = NotificationMapper.Mapper.Map<Text>(command);
-                if (textEntity is null)
-                {
-                    throw new ApplicationException("Issue with mapper");
-                }
-                var isSuccess = await _textRepository.SendAsync(textEntity);
-                
-                return isSuccess;
-
+                var text = NotificationMapper.Mapper.Map<Text>(command);
+                return await _textRepository.SendAsync(text);
             }
         }
     }

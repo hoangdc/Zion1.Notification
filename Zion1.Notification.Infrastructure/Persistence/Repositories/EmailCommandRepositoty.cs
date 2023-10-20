@@ -16,35 +16,35 @@ namespace Zion1.Notification.Infrastructure.Persistence.Repositories
             _notificationDbContext = notificationDbContext;
         }
 
-        public async Task<bool> SendAsync(Email item)
+        public async Task<int> SendAsync(Email item)
         {
+            //Send message out
+            await SendEmail(item);
             //Store Database
             var notification = await AddAsync(item);
-            //Send message out
-            bool result = await SendEmail(item);
-            return result;
+            return notification.Id;
         }
 
-        private async Task<bool> SendEmail(Email email)
+        private async Task SendEmail(Email email)
         {
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("hoangdc@gmail.com", "jnmjjdtypjgkniln");
-
-            var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse(email.From));
-            message.To.Add(MailboxAddress.Parse(email.To));
-            message.Subject = email.Subject;
-            message.Body = new TextPart(TextFormat.Html)
+            await Task.Run(() =>
             {
-                Text = email.Message
-            };
+                // create email message
+                var emailMessage = new MimeMessage();
+                emailMessage.From.Add(MailboxAddress.Parse(email.From));
+                emailMessage.To.Add(MailboxAddress.Parse(email.To));
+                emailMessage.Subject = email.Subject;
+                emailMessage.Body = new TextPart(TextFormat.Html) { Text = email.Message };
 
-            // send email
-            smtp.Send(message);
-            smtp.Disconnect(true);
+                // send email
+                using var smtp = new SmtpClient();
+                smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate("hoangdc@gmail.com", "azccpzuxiyowejtr");
+                smtp.Send(emailMessage);
+                smtp.Disconnect(true);
 
-            return true;
+            });
+            
         }
     }
 }

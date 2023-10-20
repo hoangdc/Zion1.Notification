@@ -2,7 +2,7 @@
 using Zion1.Common.API.Controller;
 using Zion1.Notification.Application.Commands;
 using Zion1.Notification.Application.Queries;
-using Zion1.Notification.Domain.Entities;
+using Zion1.Notification.Share.DTOs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,14 +12,14 @@ namespace Zion1.Notification.API.Controller
     [ApiController]
     public class EmailController : CoreController
     {
-        [HttpPost(Name = "SendEmail")]
-        public async Task<bool> SendEmail(SendEmailCommand sendEmailCommand)
+        [HttpPost]
+        public async Task<int> SendEmail(SendEmailCommand sendEmailCommand)
         {
             return await Mediator.Send(sendEmailCommand);
         }
 
-        [HttpGet(Name = "GetEmail")]
-        public async Task<IReadOnlyList<Email>> GetEmail()
+        [HttpGet]
+        public async Task<IReadOnlyList<EmailDto>> GetEmail()
         {
             return await Mediator.Send(new GetEmailQuery());
         }
