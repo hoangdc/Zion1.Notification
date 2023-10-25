@@ -3,8 +3,9 @@ using Zion1.Notification.Domain.Entities;
 
 namespace Zion1.Notification.Application.Repositories
 {
-    public interface ITextCommandRepository : ICommandRepository<Text>, INotificationRepository<Text>
+    public interface ITextCommandRepository : ICommandRepository<Text>
     {
-
+        Task<int> SaveTextAsync(Text text);
+        Task<bool> SendTextAsync(Text text);
     }
 }

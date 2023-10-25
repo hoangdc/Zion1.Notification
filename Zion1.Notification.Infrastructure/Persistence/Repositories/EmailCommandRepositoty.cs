@@ -1,5 +1,6 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
 using Zion1.Common.Infrastructure.Persistence.Repositories;
@@ -10,41 +11,52 @@ namespace Zion1.Notification.Infrastructure.Persistence.Repositories
 {
     public class EmailCommandRepository : CommandRepository<Email>, IEmailCommandRepository
     {
-        private NotificationDbContext _notificationDbContext;
-        public EmailCommandRepository(NotificationDbContext notificationDbContext) : base(notificationDbContext)
+        private readonly IConfiguration _config;
+        public EmailCommandRepository(IConfiguration configuration, NotificationDbContext notificationDbContext) : base(notificationDbContext)
         {
-            _notificationDbContext = notificationDbContext;
+            _config = configuration;
         }
 
-        public async Task<int> SendAsync(Email item)
+        public async Task<int> SaveEmailAsync(Email item)
         {
-            //Send message out
-            await SendEmail(item);
-            //Store Database
             var notification = await AddAsync(item);
             return notification.Id;
         }
 
-        private async Task SendEmail(Email email)
+        public async Task<bool> SendEmailAsync(Email email)
         {
+            bool isSuccess = true;
             await Task.Run(() =>
             {
-                // create email message
-                var emailMessage = new MimeMessage();
-                emailMessage.From.Add(MailboxAddress.Parse(email.From));
-                emailMessage.To.Add(MailboxAddress.Parse(email.To));
-                emailMessage.Subject = email.Subject;
-                emailMessage.Body = new TextPart(TextFormat.Html) { Text = email.Message };
+                var emailSettings = _config.GetSection("EmailSettings").Get<EmailSettings>();
+                if (emailSettings == null) 
+                {
+                    isSuccess = false;
+                }
+                else
+                {
+                    //create email message
+                    if (string.IsNullOrEmpty(email.From))
+                        email.From = emailSettings.FromEmail;
 
-                // send email
-                using var smtp = new SmtpClient();
-                smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate("hoangdc@gmail.com", "azccpzuxiyowejtr");
-                smtp.Send(emailMessage);
-                smtp.Disconnect(true);
+                    var emailMessage = new MimeMessage();
+                    emailMessage.From.Add(MailboxAddress.Parse(email.From));
+                    emailMessage.To.Add(MailboxAddress.Parse(email.To));
+                    emailMessage.Subject = email.Subject;
+                    emailMessage.Body = new TextPart(TextFormat.Html) { Text = email.Message };
 
+                    //send email
+                    using var smtp = new SmtpClient();
+                    smtp.Connect(emailSettings.Server, emailSettings.Port, SecureSocketOptions.StartTls);
+                    smtp.Authenticate(emailSettings.UserName, emailSettings.Password);
+                    smtp.Send(emailMessage);
+                    smtp.Disconnect(true);
+                }
             });
-            
+
+            return isSuccess;
         }
+
+        
     }
 }

@@ -18,7 +18,7 @@ namespace Zion1.Notification.Infrastructure
         {
             services.AddDbContext<NotificationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Zion1SqlServer"), b => b.MigrationsAssembly(typeof(NotificationDbContext).Assembly.FullName)), ServiceLifetime.Transient);
 
-            var smtpSettings = configuration.GetSection("SMTPSettings").Get<SMTPSettings>();
+            var smtpSettings = configuration.GetSection("SMTPSettings").Get<EmailSettings>();
             //Store SMTP Settings into Cache
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SendEmailCommand).Assembly));

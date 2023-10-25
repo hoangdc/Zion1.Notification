@@ -18,7 +18,12 @@ namespace Zion1.Notification.Application.Commands
             public async Task<int> Handle(SendEmailCommand command, CancellationToken cancellationToken)
             {
                 var email = NotificationMapper.Mapper.Map<Email>(command);
-                return await _emailRepository.SendAsync(email);
+                var isSuccess = await _emailRepository.SendEmailAsync(email);
+                if(isSuccess)
+                {
+                    return await _emailRepository.SaveEmailAsync(email);
+                }
+                return 0;
             }
         }
     }

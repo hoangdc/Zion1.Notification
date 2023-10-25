@@ -18,7 +18,12 @@ namespace Zion1.Notification.Application.Commands
             public async Task<int> Handle(SendTextCommand command, CancellationToken cancellationToken)
             {
                 var text = NotificationMapper.Mapper.Map<Text>(command);
-                return await _textRepository.SendAsync(text);
+                var isSuccess = await _textRepository.SendTextAsync(text);
+                if (isSuccess)
+                {
+                    return await _textRepository.SaveTextAsync(text);
+                }
+                return 0;
             }
         }
     }
